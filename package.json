@@ -1,0 +1,63 @@
+{
+  "name": "phantomback",
+  "version": "1.0.0",
+  "description": "Instant fake backend generator with smart responses & chaos engineering. Drop in your API schema → get a fully functional, stateful REST server with realistic data, auth, pagination, filtering, and Reality Mode for chaos testing.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "bin": {
+    "phantomback": "./bin/phantomback.js"
+  },
+  "scripts": {
+    "start": "node bin/phantomback.js start",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "keywords": [
+    "mock",
+    "fake-backend",
+    "fake-api",
+    "mock-server",
+    "rest-api",
+    "api-mock",
+    "development",
+    "prototyping",
+    "chaos-engineering",
+    "testing",
+    "frontend",
+    "faker",
+    "crud",
+    "json-server",
+    "phantom"
+  ],
+  "author": "Madhav Chaturvedi",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@faker-js/faker": "^10.3.0",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.3.0",
+    "prettier": "^3.8.1"
+  }
+}

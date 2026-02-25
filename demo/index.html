@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>👻 PhantomBack Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f0f1a;
+      --surface: #1a1a2e;
+      --surface2: #222240;
+      --border: #2d2d50;
+      --primary: #a78bfa;
+      --primary-dim: #7c5cbf;
+      --green: #4ade80;
+      --red: #f87171;
+      --yellow: #fbbf24;
+      --blue: #60a5fa;
+      --cyan: #22d3ee;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --radius: 10px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── Header ─── */
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header h1 { font-size: 24px; display: flex; align-items: center; gap: 10px; }
+    .header h1 span { color: var(--primary); }
+    .status-badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-badge.online { background: #06362a; color: var(--green); border: 1px solid #0d5e3f; }
+    .status-badge.offline { background: #3b1111; color: var(--red); border: 1px solid #5e1d1d; }
+
+    /* ─── Layout ─── */
+    .container {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .sidebar h3 {
+      padding: 0 20px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+    .nav-item {
+      padding: 10px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover { background: var(--surface2); }
+    .nav-item.active {
+      background: var(--surface2);
+      border-left-color: var(--primary);
+      color: var(--primary);
+    }
+    .nav-item .badge {
+      margin-left: auto;
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .nav-item.active .badge { background: var(--primary-dim); color: white; }
+
+    .sidebar-section { margin-bottom: 24px; }
+
+    /* ─── Auth Panel ─── */
+    .auth-panel {
+      margin: 0 14px;
+      padding: 14px;
+      background: var(--surface2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .auth-panel h4 { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .auth-panel input {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+    .auth-panel input:focus { border-color: var(--primary); }
+    .auth-row { display: flex; gap: 6px; }
+    .auth-row button { flex: 1; }
+    .auth-info {
+      margin-top: 10px;
+      padding: 8px;
+      background: #06362a;
+      border: 1px solid #0d5e3f;
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--green);
+      word-break: break-all;
+    }
+
+    /* ─── Main ─── */
+    .main { padding: 24px; overflow-y: auto; }
+
+    /* ─── Toolbar ─── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .toolbar h2 { font-size: 20px; margin-right: auto; }
+
+    input[type="text"], input[type="number"], input[type="email"], input[type="password"], select {
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: var(--primary); }
+
+    .search-box {
+      position: relative;
+    }
+    .search-box input { padding-left: 32px; width: 220px; }
+    .search-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    button:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dim); }
+    .btn-green { background: #166534; color: var(--green); }
+    .btn-green:hover { background: #15803d; }
+    .btn-red { background: #451a1a; color: var(--red); }
+    .btn-red:hover { background: #5e1d1d; }
+    .btn-blue { background: #1e3a5f; color: var(--blue); }
+    .btn-blue:hover { background: #1e40af; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* ─── Table ─── */
+    .table-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+    th:hover { color: var(--primary); }
+    th .sort-arrow { margin-left: 4px; font-size: 10px; }
+    td {
+      padding: 10px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    tr:hover td { background: rgba(167, 139, 250, 0.05); }
+    .cell-id { font-family: monospace; color: var(--text-dim); font-size: 12px; }
+    .cell-bool { font-weight: 600; }
+    .cell-bool.true { color: var(--green); }
+    .cell-bool.false { color: var(--red); }
+    .cell-avatar { width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px; }
+    .cell-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .cell-badge.admin { background: #3b1c5e; color: #c084fc; }
+    .cell-badge.user { background: #1a3650; color: var(--blue); }
+    .cell-badge.moderator { background: #3b3510; color: var(--yellow); }
+    .cell-badge.high { background: #451a1a; color: var(--red); }
+    .cell-badge.medium { background: #3b3510; color: var(--yellow); }
+    .cell-badge.low { background: #06362a; color: var(--green); }
+
+    .actions-cell { display: flex; gap: 4px; }
+
+    /* ─── Pagination ─── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .pagination .page-controls { display: flex; gap: 6px; align-items: center; }
+    .pagination button {
+      padding: 5px 12px;
+      font-size: 12px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .pagination button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .pagination .page-num {
+      padding: 5px 10px;
+      background: var(--primary);
+      color: white;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* ─── Modal ─── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 480px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .modal h3 { margin-bottom: 16px; font-size: 18px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+    }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* ─── Filters Bar ─── */
+    .filters-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .filter-chip .remove {
+      cursor: pointer;
+      color: var(--red);
+      font-weight: bold;
+    }
+
+    /* ─── Toast ─── */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toast {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      animation: slideIn 0.3s ease;
+      min-width: 280px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .toast.success { background: #06362a; color: var(--green); border: 1px solid #0d5e3f; }
+    .toast.error { background: #451a1a; color: var(--red); border: 1px solid #5e1d1d; }
+    .toast.info { background: #1e3a5f; color: var(--blue); border: 1px solid #2563eb; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* ─── JSON Viewer ─── */
+    .json-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 16px;
+      overflow: hidden;
+    }
+    .json-panel-header {
+      padding: 10px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .json-body {
+      padding: 16px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: var(--cyan);
+    }
+
+    /* ─── Feature Cards ─── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: var(--primary); }
+    .feature-card h4 { margin-bottom: 8px; font-size: 15px; }
+    .feature-card p { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+    .feature-card .try-btn { margin-top: 12px; }
+
+    /* ─── Loading ─── */
+    .loading { text-align: center; padding: 40px; color: var(--text-dim); }
+    .spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>👻 <span>PhantomBack</span> Demo</h1>
+    <div id="serverStatus" class="status-badge offline">● Checking...</div>
+  </div>
+
+  <div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <h3>Resources</h3>
+        <div id="navItems"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Authentication</h3>
+        <div class="auth-panel">
+          <div id="authLoggedOut">
+            <h4>Login / Register</h4>
+            <input type="email" id="authEmail" placeholder="Email" />
+            <input type="password" id="authPassword" placeholder="Password" />
+            <div class="auth-row">
+              <button class="btn-primary btn-sm" onclick="doLogin()">Login</button>
+              <button class="btn-green btn-sm" onclick="doRegister()">Register</button>
+            </div>
+          </div>
+          <div id="authLoggedIn" style="display:none;">
+            <div class="auth-info">
+              ✓ Logged in as<br/>
+              <strong id="authUserName"></strong><br/>
+              <span id="authUserEmail" style="font-size:10px;"></span>
+            </div>
+            <button class="btn-red btn-sm" onclick="doLogout()" style="width:100%;margin-top:8px;">Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main" id="mainContent">
+      <!-- Landing Page -->
+      <div id="landingPage">
+        <h2 style="margin-bottom:6px;">Welcome to PhantomBack Demo 👻</h2>
+        <p style="color:var(--text-dim);margin-bottom:24px;">Your fake backend is running! Click a resource on the left to explore CRUD, pagination, filtering, sorting, and search.</p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h4>📦 Auto CRUD</h4>
+            <p>Every resource gets full Create, Read, Update, Delete endpoints automatically.</p>
+            <button class="btn-primary btn-sm try-btn" onclick="switchResource('products')">Try Products →</button>
+          </div>
+          <div class="feature-card">
+            <h4>📄 Pagination</h4>
+            <p>Use ?page=1&limit=10 to paginate through records. Navigate with Previous / Next buttons.</p>
+            <button class="btn-primary btn-sm try-btn" onclick="switchResource('posts')">Try Posts →</button>
+          </div>
+          <div class="feature-card">
+            <h4>🔍 Search & Filter</h4>
+            <p>Full-text search with ?q=term and field filtering with ?field=value, _gte, _lte, _like operators.</p>
+            <button class="btn-primary btn-sm try-btn" onclick="switchResource('todos')">Try Todos →</button>
+          </div>
+          <div class="feature-card">
+            <h4>🔒 JWT Auth</h4>
+            <p>Register, Login, get JWT tokens. Protected resources require Bearer token authorization.</p>
+            <button class="btn-primary btn-sm try-btn" onclick="switchResource('users')">Try Users (Protected) →</button>
+          </div>
+          <div class="feature-card">
+            <h4>🔗 Nested Routes</h4>
+            <p>Related resources auto-generate nested endpoints like /users/:id/posts and /users/:id/todos.</p>
+            <button class="btn-blue btn-sm try-btn" onclick="testNestedRoute()">Test Nested →</button>
+          </div>
+          <div class="feature-card">
+            <h4>📊 Realistic Data</h4>
+            <p>Faker.js generates names, emails, avatars, prices, dates, and more — looks like real production data.</p>
+            <button class="btn-primary btn-sm try-btn" onclick="switchResource('users')">See Users →</button>
+          </div>
+        </div>
+
+        <!-- Raw JSON Panel -->
+        <div class="json-panel">
+          <div class="json-panel-header">
+            <span>📡 API Response Viewer</span>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="rawUrl" value="/api" style="width:300px;font-family:monospace;font-size:12px;" />
+              <button class="btn-primary btn-sm" onclick="fetchRaw()">GET</button>
+            </div>
+          </div>
+          <div class="json-body" id="rawJson">Click GET to see a raw API response...</div>
+        </div>
+      </div>
+
+      <!-- Resource View (hidden initially) -->
+      <div id="resourceView" style="display:none;">
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <h2 id="resourceTitle"></h2>
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search..." oninput="debounceSearch()" />
+          </div>
+          <select id="limitSelect" onchange="loadData()">
+            <option value="5">5 per page</option>
+            <option value="10" selected>10 per page</option>
+            <option value="25">25 per page</option>
+            <option value="50">50 per page</option>
+          </select>
+          <button class="btn-green" onclick="openCreateModal()">+ Create New</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar" id="activeFilters"></div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <table>
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div class="pagination" id="paginationBar">
+            <span id="pageInfo"></span>
+            <div class="page-controls">
+              <button onclick="prevPage()">← Prev</button>
+              <span class="page-num" id="currentPage">1</span>
+              <button onclick="nextPage()">Next →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- JSON Panel -->
+        <div class="json-panel" style="margin-top:16px;">
+          <div class="json-panel-header">
+            <span>📡 Last API Call</span>
+            <span id="lastUrl" style="font-family:monospace;font-size:11px;color:var(--cyan);"></span>
+          </div>
+          <div class="json-body" id="responseJson"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create / Edit Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3 id="modalTitle">Create Record</h3>
+      <div id="modalFields"></div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" id="modalSubmit" onclick="submitModal()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toasts"></div>
+
+<script>
+// ─── Config ───
+const API = 'http://localhost:3777';
+const PREFIX = '/api';
+
+// ─── State ───
+let state = {
+  currentResource: null,
+  page: 1,
+  limit: 10,
+  sort: null,
+  order: 'asc',
+  search: '',
+  filters: {},
+  data: [],
+  meta: null,
+  token: localStorage.getItem('phantom_token') || null,
+  user: JSON.parse(localStorage.getItem('phantom_user') || 'null'),
+  endpoints: {},
+  editingId: null,
+};
+
+// Resource field display config
+const RESOURCE_COLUMNS = {
+  users: ['id', 'name', 'email', 'username', 'age', 'role', 'isActive'],
+  posts: ['id', 'title', 'published', 'views', 'userId', 'createdAt'],
+  comments: ['id', 'body', 'rating', 'userId', 'postId', 'createdAt'],
+  products: ['id', 'name', 'price', 'category', 'inStock', 'rating'],
+  todos: ['id', 'title', 'completed', 'priority', 'userId'],
+};
+
+const RESOURCE_ICONS = {
+  users: '👤',
+  posts: '📝',
+  comments: '💬',
+  products: '📦',
+  todos: '✅',
+};
+
+// ─── Init ───
+async function init() {
+  await checkServer();
+  await loadEndpoints();
+  renderNav();
+  if (state.user) showLoggedIn();
+}
+
+async function checkServer() {
+  try {
+    const res = await fetch(`${API}${PREFIX}/_health`);
+    const data = await res.json();
+    const el = document.getElementById('serverStatus');
+    el.className = 'status-badge online';
+    el.textContent = `● Online (${Math.round(data.uptime)}s uptime)`;
+  } catch {
+    const el = document.getElementById('serverStatus');
+    el.className = 'status-badge offline';
+    el.textContent = '● Offline';
+  }
+}
+
+async function loadEndpoints() {
+  try {
+    const res = await fetch(`${API}${PREFIX}`);
+    const data = await res.json();
+    state.endpoints = data.endpoints || {};
+  } catch {}
+}
+
+// ─── Navigation ───
+function renderNav() {
+  const container = document.getElementById('navItems');
+  container.innerHTML = '';
+  const resources = Object.keys(state.endpoints);
+
+  // Home item
+  const home = document.createElement('div');
+  home.className = 'nav-item active';
+  home.innerHTML = '🏠 Home';
+  home.onclick = () => showLanding();
+  container.appendChild(home);
+
+  for (const name of resources) {
+    const item = document.createElement('div');
+    item.className = 'nav-item';
+    item.id = `nav-${name}`;
+    item.innerHTML = `${RESOURCE_ICONS[name] || '📄'} ${name} <span class="badge" id="count-${name}">...</span>`;
+    item.onclick = () => switchResource(name);
+    container.appendChild(item);
+  }
+
+  // Load counts
+  resources.forEach(async (name) => {
+    try {
+      const headers = {};
+      if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+      const res = await fetch(`${API}${PREFIX}/${name}?limit=1`, { headers });
+      const data = await res.json();
+      const badge = document.getElementById(`count-${name}`);
+      if (badge && data.meta) badge.textContent = data.meta.total;
+    } catch {}
+  });
+}
+
+function showLanding() {
+  document.getElementById('landingPage').style.display = 'block';
+  document.getElementById('resourceView').style.display = 'none';
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('.nav-item').classList.add('active');
+  state.currentResource = null;
+}
+
+function switchResource(name) {
+  state.currentResource = name;
+  state.page = 1;
+  state.sort = null;
+  state.search = '';
+  state.filters = {};
+  document.getElementById('searchInput').value = '';
+
+  document.getElementById('landingPage').style.display = 'none';
+  document.getElementById('resourceView').style.display = 'block';
+  document.getElementById('resourceTitle').textContent = `${RESOURCE_ICONS[name] || '📄'} ${name}`;
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.getElementById(`nav-${name}`);
+  if (navItem) navItem.classList.add('active');
+
+  renderTableHead();
+  loadData();
+}
+
+// ─── Data Loading ───
+async function loadData() {
+  const name = state.currentResource;
+  if (!name) return;
+
+  state.limit = parseInt(document.getElementById('limitSelect').value);
+
+  // Build URL
+  const params = new URLSearchParams();
+  params.set('page', state.page);
+  params.set('limit', state.limit);
+
+  if (state.search) params.set('q', state.search);
+  if (state.sort) {
+    params.set('sort', (state.order === 'desc' ? '-' : '') + state.sort);
+  }
+  for (const [k, v] of Object.entries(state.filters)) {
+    params.set(k, v);
+  }
+
+  const url = `${PREFIX}/${name}?${params}`;
+  document.getElementById('lastUrl').textContent = `GET ${url}`;
+
+  try {
+    const headers = {};
+    if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+
+    const res = await fetch(`${API}${url}`, { headers });
+    const json = await res.json();
+
+    document.getElementById('responseJson').textContent = JSON.stringify(json, null, 2);
+
+    if (!json.success) {
+      toast(json.error?.message || 'Request failed', 'error');
+      if (json.error?.status === 401) {
+        toast('This resource is protected. Please login first!', 'info');
+      }
+      return;
+    }
+
+    state.data = json.data || [];
+    state.meta = json.meta || {};
+    renderTableBody();
+    renderPagination();
+  } catch (err) {
+    toast('Failed to fetch data: ' + err.message, 'error');
+  }
+}
+
+// ─── Table Rendering ───
+function renderTableHead() {
+  const name = state.currentResource;
+  const cols = RESOURCE_COLUMNS[name] || ['id'];
+  const thead = document.getElementById('tableHead');
+
+  let html = '<tr>';
+  for (const col of cols) {
+    const isActive = state.sort === col;
+    const arrow = isActive ? (state.order === 'asc' ? '▲' : '▼') : '';
+    html += `<th onclick="toggleSort('${col}')">${col} <span class="sort-arrow">${arrow}</span></th>`;
+  }
+  html += '<th>Actions</th></tr>';
+  thead.innerHTML = html;
+}
+
+function renderTableBody() {
+  const name = state.currentResource;
+  const cols = RESOURCE_COLUMNS[name] || ['id'];
+  const tbody = document.getElementById('tableBody');
+
+  if (state.data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="${cols.length + 1}" style="text-align:center;padding:40px;color:var(--text-dim);">No records found</td></tr>`;
+    return;
+  }
+
+  let html = '';
+  for (const record of state.data) {
+    html += '<tr>';
+    for (const col of cols) {
+      html += `<td>${formatCell(col, record[col], record)}</td>`;
+    }
+    html += `<td><div class="actions-cell">
+      <button class="btn-blue btn-sm" onclick='viewRecord("${record.id}")'>👁</button>
+      <button class="btn-primary btn-sm" onclick='editRecord("${record.id}")'>✏️</button>
+      <button class="btn-red btn-sm" onclick='deleteRecord("${record.id}")'>🗑</button>
+    </div></td>`;
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function formatCell(col, value, record) {
+  if (value === undefined || value === null) return '<span style="color:var(--text-dim)">—</span>';
+
+  if (col === 'id') return `<span class="cell-id">${value}</span>`;
+
+  if (typeof value === 'boolean' || col === 'completed' || col === 'published' || col === 'inStock' || col === 'isActive') {
+    return `<span class="cell-bool ${value}">${value ? '✓ Yes' : '✗ No'}</span>`;
+  }
+
+  if (col === 'role' || col === 'priority') {
+    return `<span class="cell-badge ${value}">${value}</span>`;
+  }
+
+  if (col === 'price') return `$${parseFloat(value).toFixed(2)}`;
+  if (col === 'rating') return `⭐ ${value}`;
+  if (col === 'views') return Number(value).toLocaleString();
+
+  if (col === 'avatar' && value) {
+    return `<img src="${value}" class="cell-avatar" onerror="this.style.display='none'" />${record.name || ''}`;
+  }
+
+  if (col === 'createdAt' || col === 'updatedAt') {
+    return new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  if (typeof value === 'string' && value.length > 60) {
+    return value.substring(0, 60) + '...';
+  }
+
+  return String(value);
+}
+
+// ─── Pagination ───
+function renderPagination() {
+  const m = state.meta;
+  if (!m) return;
+  document.getElementById('pageInfo').textContent =
+    `Showing ${state.data.length} of ${m.total} records (Page ${m.page} of ${m.totalPages})`;
+  document.getElementById('currentPage').textContent = m.page;
+
+  const prevBtn = document.querySelector('.page-controls button:first-child');
+  const nextBtn = document.querySelector('.page-controls button:last-child');
+  prevBtn.disabled = !m.hasPrev;
+  nextBtn.disabled = !m.hasNext;
+}
+
+function prevPage() {
+  if (state.meta?.hasPrev) { state.page--; loadData(); }
+}
+
+function nextPage() {
+  if (state.meta?.hasNext) { state.page++; loadData(); }
+}
+
+// ─── Sorting ───
+function toggleSort(col) {
+  if (state.sort === col) {
+    state.order = state.order === 'asc' ? 'desc' : 'asc';
+  } else {
+    state.sort = col;
+    state.order = 'asc';
+  }
+  state.page = 1;
+  renderTableHead();
+  loadData();
+}
+
+// ─── Search ───
+let searchTimeout;
+function debounceSearch() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    state.search = document.getElementById('searchInput').value;
+    state.page = 1;
+    loadData();
+  }, 300);
+}
+
+// ─── CRUD: View ───
+async function viewRecord(id) {
+  const name = state.currentResource;
+  const headers = {};
+  if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+
+  try {
+    const res = await fetch(`${API}${PREFIX}/${name}/${id}`, { headers });
+    const json = await res.json();
+
+    document.getElementById('responseJson').textContent = JSON.stringify(json, null, 2);
+    document.getElementById('lastUrl').textContent = `GET ${PREFIX}/${name}/${id}`;
+    toast(`Viewing ${name} #${id}`, 'info');
+  } catch (err) {
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
+// ─── CRUD: Create ───
+function openCreateModal() {
+  state.editingId = null;
+  document.getElementById('modalTitle').textContent = `Create ${state.currentResource}`;
+  document.getElementById('modalSubmit').textContent = 'Create';
+  renderModalFields({});
+  document.getElementById('modal').classList.add('active');
+}
+
+// ─── CRUD: Edit ───
+async function editRecord(id) {
+  const record = state.data.find(r => r.id === id);
+  if (!record) return;
+
+  state.editingId = id;
+  document.getElementById('modalTitle').textContent = `Edit ${state.currentResource} #${id}`;
+  document.getElementById('modalSubmit').textContent = 'Save Changes';
+  renderModalFields(record);
+  document.getElementById('modal').classList.add('active');
+}
+
+function renderModalFields(record) {
+  const name = state.currentResource;
+  const cols = RESOURCE_COLUMNS[name] || [];
+  const container = document.getElementById('modalFields');
+  let html = '';
+
+  for (const col of cols) {
+    if (col === 'id' || col === 'createdAt' || col === 'updatedAt') continue;
+
+    const value = record[col] !== undefined ? record[col] : '';
+    const type = (typeof value === 'number') ? 'number' : (typeof value === 'boolean') ? 'text' : 'text';
+
+    if (col === 'role') {
+      html += `<div class="form-group"><label>${col}</label>
+        <select id="field-${col}">
+          <option value="admin" ${value === 'admin' ? 'selected' : ''}>admin</option>
+          <option value="user" ${value === 'user' ? 'selected' : ''}>user</option>
+          <option value="moderator" ${value === 'moderator' ? 'selected' : ''}>moderator</option>
+        </select></div>`;
+    } else if (col === 'priority') {
+      html += `<div class="form-group"><label>${col}</label>
+        <select id="field-${col}">
+          <option value="low" ${value === 'low' ? 'selected' : ''}>low</option>
+          <option value="medium" ${value === 'medium' ? 'selected' : ''}>medium</option>
+          <option value="high" ${value === 'high' ? 'selected' : ''}>high</option>
+        </select></div>`;
+    } else if (typeof value === 'boolean' || col === 'completed' || col === 'published' || col === 'inStock' || col === 'isActive') {
+      html += `<div class="form-group"><label>${col}</label>
+        <select id="field-${col}">
+          <option value="true" ${value === true ? 'selected' : ''}>true</option>
+          <option value="false" ${value === false ? 'selected' : ''}>false</option>
+        </select></div>`;
+    } else {
+      html += `<div class="form-group"><label>${col}</label>
+        <input type="${type}" id="field-${col}" value="${escapeHtml(String(value))}" /></div>`;
+    }
+  }
+
+  container.innerHTML = html;
+}
+
+async function submitModal() {
+  const name = state.currentResource;
+  const cols = RESOURCE_COLUMNS[name] || [];
+  const body = {};
+
+  for (const col of cols) {
+    if (col === 'id' || col === 'createdAt' || col === 'updatedAt') continue;
+    const el = document.getElementById(`field-${col}`);
+    if (!el) continue;
+
+    let val = el.value;
+    if (val === 'true') val = true;
+    else if (val === 'false') val = false;
+    else if (!isNaN(val) && val !== '') val = Number(val);
+
+    body[col] = val;
+  }
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+
+  try {
+    let url, method;
+    if (state.editingId) {
+      url = `${API}${PREFIX}/${name}/${state.editingId}`;
+      method = 'PATCH';
+    } else {
+      url = `${API}${PREFIX}/${name}`;
+      method = 'POST';
+    }
+
+    const res = await fetch(url, { method, headers, body: JSON.stringify(body) });
+    const json = await res.json();
+
+    document.getElementById('responseJson').textContent = JSON.stringify(json, null, 2);
+    document.getElementById('lastUrl').textContent = `${method} ${url.replace(API, '')}`;
+
+    if (json.success) {
+      toast(`${state.editingId ? 'Updated' : 'Created'} successfully!`, 'success');
+      closeModal();
+      loadData();
+      renderNav(); // update counts
+    } else {
+      toast(json.error?.message || 'Operation failed', 'error');
+    }
+  } catch (err) {
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  state.editingId = null;
+}
+
+// ─── CRUD: Delete ───
+async function deleteRecord(id) {
+  if (!confirm(`Delete ${state.currentResource} #${id}?`)) return;
+
+  const headers = {};
+  if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+
+  try {
+    const res = await fetch(`${API}${PREFIX}/${state.currentResource}/${id}`, {
+      method: 'DELETE',
+      headers,
+    });
+    const json = await res.json();
+
+    document.getElementById('responseJson').textContent = JSON.stringify(json, null, 2);
+    document.getElementById('lastUrl').textContent = `DELETE ${PREFIX}/${state.currentResource}/${id}`;
+
+    if (json.success) {
+      toast('Deleted successfully!', 'success');
+      loadData();
+      renderNav();
+    } else {
+      toast(json.error?.message || 'Delete failed', 'error');
+    }
+  } catch (err) {
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
+// ─── Auth ───
+async function doRegister() {
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPassword').value;
+
+  if (!email || !password) return toast('Email and password required', 'error');
+
+  try {
+    const res = await fetch(`${API}${PREFIX}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name: email.split('@')[0] }),
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      state.token = json.data.token;
+      state.user = json.data.user;
+      localStorage.setItem('phantom_token', state.token);
+      localStorage.setItem('phantom_user', JSON.stringify(state.user));
+      showLoggedIn();
+      toast('Registered & logged in!', 'success');
+      renderNav();
+    } else {
+      toast(json.error?.message || 'Registration failed', 'error');
+    }
+  } catch (err) {
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
+async function doLogin() {
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPassword').value;
+
+  if (!email) return toast('Email is required', 'error');
+
+  try {
+    const res = await fetch(`${API}${PREFIX}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      state.token = json.data.token;
+      state.user = json.data.user;
+      localStorage.setItem('phantom_token', state.token);
+      localStorage.setItem('phantom_user', JSON.stringify(state.user));
+      showLoggedIn();
+      toast('Logged in!', 'success');
+      renderNav();
+      if (state.currentResource) loadData();
+    } else {
+      toast(json.error?.message || 'Login failed', 'error');
+    }
+  } catch (err) {
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
+function doLogout() {
+  state.token = null;
+  state.user = null;
+  localStorage.removeItem('phantom_token');
+  localStorage.removeItem('phantom_user');
+  document.getElementById('authLoggedOut').style.display = 'block';
+  document.getElementById('authLoggedIn').style.display = 'none';
+  toast('Logged out', 'info');
+  renderNav();
+  if (state.currentResource) loadData();
+}
+
+function showLoggedIn() {
+  document.getElementById('authLoggedOut').style.display = 'none';
+  document.getElementById('authLoggedIn').style.display = 'block';
+  document.getElementById('authUserName').textContent = state.user?.name || 'User';
+  document.getElementById('authUserEmail').textContent = state.user?.email || '';
+}
+
+// ─── Nested Route Test ───
+async function testNestedRoute() {
+  const headers = {};
+  if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+
+  try {
+    // Get first todo to find a userId
+    const todosRes = await fetch(`${API}${PREFIX}/todos?limit=1`, { headers });
+    const todosData = await todosRes.json();
+    const userId = todosData.data?.[0]?.userId;
+
+    if (!userId) { toast('No todos found to test nested routes', 'error'); return; }
+
+    const url = `${PREFIX}/users/${userId}/todos`;
+    const res = await fetch(`${API}${url}`, { headers });
+    const json = await res.json();
+
+    // Show on landing page
+    document.getElementById('rawUrl').value = url;
+    document.getElementById('rawJson').textContent = JSON.stringify(json, null, 2);
+    toast(`Nested route: Found ${json.meta?.total || 0} todos for user ${userId}`, 'success');
+  } catch (err) {
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
+// ─── Raw API Fetch ───
+async function fetchRaw() {
+  const url = document.getElementById('rawUrl').value;
+  const headers = {};
+  if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+
+  try {
+    const res = await fetch(`${API}${url}`, { headers });
+    const json = await res.json();
+    document.getElementById('rawJson').textContent = JSON.stringify(json, null, 2);
+    toast(`GET ${url} → ${res.status}`, 'info');
+  } catch (err) {
+    document.getElementById('rawJson').textContent = 'Error: ' + err.message;
+    toast('Request failed', 'error');
+  }
+}
+
+// ─── Helpers ───
+function toast(message, type = 'info') {
+  const container = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = message;
+  container.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Click outside modal to close
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
+// ─── Start ───
+init();
+</script>
+</body>
+</html>

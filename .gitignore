@@ -1,0 +1,3 @@
+node_modules/
+.phantom-data.json
+.DS_Store
