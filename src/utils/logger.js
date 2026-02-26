@@ -29,7 +29,7 @@ export const logger = {
     console.log(chalk.hex('#a78bfa').bold('  ╔═══════════════════════════════════════╗'));
     console.log(
       chalk.hex('#a78bfa').bold('  ║         ') +
-        chalk.white.bold('👻 PhantomBack v1.0.0') +
+        chalk.white.bold('PhantomBack v1.0.0') +
         chalk.hex('#a78bfa').bold('         ║'),
     );
     console.log(
