@@ -14,7 +14,11 @@
 Drop in your API schema → get a fully functional REST server with realistic data,
 JWT auth, pagination, filtering, sorting, search, and nested routes — in seconds.
 
-[Getting Started](#-quick-start) · [Config Guide](#-configuration) · [API Reference](#-auto-generated-routes) · [Examples](#-real-world-examples)
+[Getting Started](https://phantombackxdocs.vercel.app/getting-started) · [Config Guide](https://phantombackxdocs.vercel.app/configuration) · [API Reference](https://phantombackxdocs.vercel.app/api-reference) · [Examples](https://phantombackxdocs.vercel.app/examples)
+
+[Documentation](https://phantombackxdocs.vercel.app) · [npm](https://www.npmjs.com/package/phantomback) · [GitHub](https://github.com/madhavxchaturvedi/npm-phantomback)
+
+Made by [Madhav Chaturvedi](https://madhavxchaturvedi.vercel.app) · [LinkedIn](https://www.linkedin.com/in/madhavxchaturvedi/) · [Instagram](https://www.instagram.com/madhavxchaturvedi)
 
 </div>
 
@@ -458,13 +462,3 @@ All responses follow a consistent format:
 ## 📄 License
 
 MIT © [Madhav Chaturvedi](https://github.com/madhavxchaturvedi)
-
----
-
-<div align="center">
-
-[Documentation](https://phantombackxdocs.vercel.app) · [npm](https://www.npmjs.com/package/phantomback) · [GitHub](https://github.com/madhavxchaturvedi/npm-phantomback)
-
-Made by [Madhav Chaturvedi](https://madhavxchaturvedi.vercel.app) · [LinkedIn](https://www.linkedin.com/in/madhavxchaturvedi/) · [Instagram](https://www.instagram.com/madhavxchaturvedi)
-
-</div>
