@@ -36,6 +36,14 @@
   ],
   "author": "Madhav Chaturvedi",
   "license": "MIT",
+  "homepage": "https://phantombackxdocs.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madhavxchaturvedi/npm-phantomback.git"
+  },
+  "bugs": {
+    "url": "https://github.com/madhavxchaturvedi/npm-phantomback/issues"
+  },
   "engines": {
     "node": ">=18.0.0"
   },

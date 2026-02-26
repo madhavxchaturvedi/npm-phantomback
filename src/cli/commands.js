@@ -15,7 +15,7 @@ export async function initCommand() {
   }
 
   const template = `// PhantomBack Configuration
-// Docs: https://github.com/phantomback/phantomback
+// Docs: https://phantombackxdocs.vercel.app
 
 export default {
   port: 3777,

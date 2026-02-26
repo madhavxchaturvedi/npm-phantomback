@@ -7,6 +7,7 @@
 [![npm version](https://img.shields.io/npm/v/phantomback.svg?style=flat-square&color=a78bfa)](https://www.npmjs.com/package/phantomback)
 [![license](https://img.shields.io/npm/l/phantomback.svg?style=flat-square)](LICENSE)
 [![node](https://img.shields.io/node/v/phantomback.svg?style=flat-square)](package.json)
+[![docs](https://img.shields.io/badge/docs-phantomback-a78bfa?style=flat-square)](https://phantombackxdocs.vercel.app)
 
 **Stop waiting for the backend. Start building now.**
 
@@ -456,4 +457,14 @@ All responses follow a consistent format:
 
 ## 📄 License
 
-MIT © [Madhav Chaturvedi](https://github.com/madhavchaturvedi)
+MIT © [Madhav Chaturvedi](https://github.com/madhavxchaturvedi)
+
+---
+
+<div align="center">
+
+[Documentation](https://phantombackxdocs.vercel.app) · [npm](https://www.npmjs.com/package/phantomback) · [GitHub](https://github.com/madhavxchaturvedi/npm-phantomback)
+
+Made by [Madhav Chaturvedi](https://madhavxchaturvedi.vercel.app) · [LinkedIn](https://www.linkedin.com/in/madhavxchaturvedi/) · [Instagram](https://www.instagram.com/madhavxchaturvedi)
+
+</div>
