@@ -64,4 +64,5 @@ export { createServer } from './server/createServer.js';
 export { parseConfig } from './schema/parser.js';
 export { DEFAULT_RESOURCES } from './schema/defaults.js';
 export { DataStore } from './data/store.js';
+export { ChaosEngine, chaosMiddleware, createChaosRoutes } from './features/chaos.js';
 export { logger } from './utils/logger.js';

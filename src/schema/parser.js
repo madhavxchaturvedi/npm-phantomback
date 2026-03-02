@@ -16,6 +16,13 @@ export const DEFAULT_CONFIG = {
   },
   chaos: {
     enabled: false,
+    latency: { min: 200, max: 5000 },
+    failureRate: 0.1,
+    errorCodes: [500, 502, 503, 504],
+    connectionDropRate: 0.02,
+    corruptionRate: 0.02,
+    timeoutRate: 0.03,
+    scenarios: ['latency', 'failure', 'drop', 'corruption', 'timeout'],
   },
   resources: {},
   snapshot: false,
@@ -79,6 +86,8 @@ async function findConfigFile() {
  * Merge user config with defaults
  */
 function mergeConfig(userConfig) {
+  const userChaos = userConfig.chaos || {};
+
   return {
     ...DEFAULT_CONFIG,
     ...userConfig,
@@ -88,7 +97,13 @@ function mergeConfig(userConfig) {
     },
     chaos: {
       ...DEFAULT_CONFIG.chaos,
-      ...(userConfig.chaos || {}),
+      ...userChaos,
+      latency: {
+        ...DEFAULT_CONFIG.chaos.latency,
+        ...(userChaos.latency || {}),
+      },
+      errorCodes: userChaos.errorCodes || DEFAULT_CONFIG.chaos.errorCodes,
+      scenarios: userChaos.scenarios || DEFAULT_CONFIG.chaos.scenarios,
     },
   };
 }

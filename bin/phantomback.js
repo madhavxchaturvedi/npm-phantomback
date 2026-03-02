@@ -23,6 +23,9 @@ program
   .option('--prefix <prefix>', 'API route prefix', '/api')
   .option('-c, --config <path>', 'Path to config file')
   .option('-z, --zero', 'Zero-config mode: generate a full demo backend')
+  .option('--chaos', 'Enable Reality Mode (chaos engineering)')
+  .option('--chaos-failure <rate>', 'Failure rate for Reality Mode (0-1)', parseFloat)
+  .option('--chaos-latency <range>', 'Latency range in ms (e.g. "200,5000")')
   .action(async (options) => {
     const { startCommand } = await import('../src/cli/commands.js');
     await startCommand(options);

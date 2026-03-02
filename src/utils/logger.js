@@ -55,4 +55,70 @@ export const logger = {
     }
     console.log('');
   },
+
+  // ── Reality Mode (Chaos) Logging ──
+  chaos: (...args) =>
+    console.log(PREFIX, chalk.hex('#ff6b6b').bold('⚡CHAOS'), ...args),
+
+  chaosBanner: (config) => {
+    console.log('');
+    console.log(chalk.hex('#ff6b6b').bold('  ┌───────────────────────────────────────┐'));
+    console.log(
+      chalk.hex('#ff6b6b').bold('  │    ') +
+        chalk.white.bold('⚡ Reality Mode ACTIVE ⚡') +
+        chalk.hex('#ff6b6b').bold('        │'),
+    );
+    console.log(
+      chalk.hex('#ff6b6b').bold('  │  ') +
+        chalk.dim('Chaos is being injected into your API') +
+        chalk.hex('#ff6b6b').bold(' │'),
+    );
+    console.log(chalk.hex('#ff6b6b').bold('  └───────────────────────────────────────┘'));
+    console.log('');
+    if (config) {
+      const scenarios = config.scenarios || [];
+      console.log(PREFIX, chalk.hex('#ff6b6b').bold('Active Scenarios:'));
+      if (scenarios.includes('latency')) {
+        console.log(
+          PREFIX,
+          chalk.dim('  ├─'),
+          chalk.yellow('⏱  Latency Spikes'),
+          chalk.dim(`(${config.latency?.min || 200}–${config.latency?.max || 5000}ms)`),
+        );
+      }
+      if (scenarios.includes('failure')) {
+        console.log(
+          PREFIX,
+          chalk.dim('  ├─'),
+          chalk.red('💥 Random Failures'),
+          chalk.dim(`(${(config.failureRate || 0.1) * 100}% rate)`),
+        );
+      }
+      if (scenarios.includes('drop')) {
+        console.log(
+          PREFIX,
+          chalk.dim('  ├─'),
+          chalk.magenta('🔌 Connection Drops'),
+          chalk.dim(`(${(config.connectionDropRate || 0.02) * 100}% rate)`),
+        );
+      }
+      if (scenarios.includes('corruption')) {
+        console.log(
+          PREFIX,
+          chalk.dim('  ├─'),
+          chalk.hex('#ff9f43')('🧩 Response Corruption'),
+          chalk.dim(`(${(config.corruptionRate || 0.02) * 100}% rate)`),
+        );
+      }
+      if (scenarios.includes('timeout')) {
+        console.log(
+          PREFIX,
+          chalk.dim('  ├─'),
+          chalk.hex('#ee5a24')('⏳ Request Timeouts'),
+          chalk.dim(`(${(config.timeoutRate || 0.03) * 100}% rate)`),
+        );
+      }
+      console.log('');
+    }
+  },
 };
