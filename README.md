@@ -284,14 +284,59 @@ curl http://localhost:3777/api/users \
 
 ---
 
+## Reality Mode — Chaos Engineering
+
+Test your frontend's resilience by simulating real-world production failures.
+
+Enable in `phantom.config.js`:
+
+```js
+export default {
+  // ...
+  chaos: {
+    enabled: true,
+    latency:            { min: 200, max: 5000 }, // latency jitter range (ms)
+    failureRate:        0.1,                      // 10% random 5xx responses
+    errorCodes:         [500, 502, 503, 504],
+    connectionDropRate: 0.02,                     // 2% abrupt connection drops
+    corruptionRate:     0.02,                     // 2% malformed JSON
+    timeoutRate:        0.03,                     // 3% hanging responses
+    scenarios:          ['latency', 'failure', 'drop', 'corruption', 'timeout'],
+  },
+};
+```
+
+Or enable instantly from the CLI:
+
+```bash
+phantomback start --chaos                           # enable with defaults
+phantomback start --chaos --chaos-failure 0.2      # 20% failure rate
+phantomback start --chaos --chaos-latency 500,3000 # 500–3000 ms jitter
+```
+
+| Scenario | Config Key | Description |
+|---|---|---|
+| `latency` | `latency` | Injects random delay on ~30% of requests |
+| `failure` | `failureRate` | Returns a random 5xx error |
+| `drop` | `connectionDropRate` | Abruptly closes the TCP connection |
+| `corruption` | `corruptionRate` | Sends malformed / partial JSON |
+| `timeout` | `timeoutRate` | Hangs the response for ~30 seconds |
+
+> **Full guide →** [phantombackxdocs.vercel.app/docs/reality-mode](https://phantombackxdocs.vercel.app/docs/reality-mode)
+
+---
+
 ## CLI Reference
 
 ```bash
-phantomback start              # start with phantom.config.js
-phantomback start --zero       # zero-config demo mode
-phantomback start --port 4000  # custom port
-phantomback start --config ./my-api.config.js
-phantomback init               # generate starter config
+phantomback start                              # start with phantom.config.js
+phantomback start --zero                       # zero-config demo mode
+phantomback start --port 4000                  # custom port
+phantomback start --config ./my-api.config.js  # custom config path
+phantomback start --chaos                      # enable Reality Mode
+phantomback start --chaos --chaos-failure 0.2  # 20% failure rate
+phantomback start --chaos --chaos-latency 200,5000  # latency jitter range
+phantomback init                               # generate starter config
 phantomback --help
 ```
 

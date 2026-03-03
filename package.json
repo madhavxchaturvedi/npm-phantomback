@@ -1,6 +1,6 @@
 {
   "name": "phantomback",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Instant fake backend generator with smart responses & chaos engineering. Drop in your API schema → get a fully functional, stateful REST server with realistic data, auth, pagination, filtering, and Reality Mode for chaos testing.",
   "type": "module",
   "main": "./src/index.js",
