@@ -4,18 +4,22 @@
 
 # 👻 PhantomBack
 
-**Instant Fake Backend Generator with Smart Responses**
+**Instant Fake Backend · Chaos Engineering · Reality Mode**
 
 [![npm version](https://img.shields.io/npm/v/phantomback.svg?style=flat-square&color=a78bfa)](https://www.npmjs.com/package/phantomback)
 [![downloads](https://img.shields.io/npm/dm/phantomback.svg?style=flat-square&color=a78bfa)](https://www.npmjs.com/package/phantomback)
 [![license](https://img.shields.io/npm/l/phantomback.svg?style=flat-square)](LICENSE)
 [![node](https://img.shields.io/node/v/phantomback.svg?style=flat-square)](package.json)
 
-Stop waiting for the backend. Drop in your API schema → get a fully functional REST server with
-realistic data, JWT auth, pagination, filtering, sorting, search, and nested routes — in seconds.
+Two tools, one package — everything you need to build and harden frontends without a real backend.
+
+**Fake Backend** — Drop in your API schema → get a fully functional REST server with realistic data, JWT auth, pagination, filtering, sorting, search, and nested routes in seconds.
+
+**Reality Mode** — Flip one flag and your fake API starts behaving like a broken production server: random failures, latency spikes, connection drops, corrupted responses, and timeouts — so your error handling actually gets tested.
 
 [Documentation](https://phantombackxdocs.vercel.app) ·
 [Getting Started](https://phantombackxdocs.vercel.app/docs/getting-started) ·
+[Reality Mode](https://phantombackxdocs.vercel.app/docs/reality-mode) ·
 [API Reference](https://phantombackxdocs.vercel.app/docs/api-reference) ·
 [Playground](https://phantombackxdocs.vercel.app/docs/playground) ·
 [GitHub](https://github.com/madhavxchaturvedi/npm-phantomback)
@@ -28,6 +32,8 @@ realistic data, JWT auth, pagination, filtering, sorting, search, and nested rou
 
 ## Why PhantomBack?
 
+**Fake Backend**
+
 | Pain point | PhantomBack fix |
 |---|---|
 | Backend not ready yet | Full REST API in one command |
@@ -35,6 +41,16 @@ realistic data, JWT auth, pagination, filtering, sorting, search, and nested rou
 | No pagination / filtering in mocks | Full query support out of the box |
 | Auth testing is painful | JWT auth simulation built-in |
 | Mock server setup takes time | One command or one line of code |
+
+**Reality Mode — Chaos Engineering**
+
+| Pain point | PhantomBack fix |
+|---|---|
+| Error handling never gets tested | Random 5xx failures on every request |
+| Network issues are hard to reproduce | Configurable latency spikes and jitter |
+| Connection drops catch you off guard | Simulated TCP drops via `connectionDropRate` |
+| Bad JSON is untested | Malformed response injection via `corruptionRate` |
+| Timeout handling is always skipped | Hanging responses via `timeoutRate` |
 
 ---
 
@@ -99,6 +115,28 @@ One-liner for zero-config:
 ```js
 import { createPhantomZero } from 'phantomback';
 await createPhantomZero(); // Full demo API on port 3777
+```
+
+### Reality Mode — one flag, instant chaos
+
+```bash
+phantomback start --zero --chaos
+```
+
+Your same fake API now randomly:
+
+| What happens | How often (defaults) |
+|---|---|
+| Injects latency spikes (200–5000 ms) | ~30% of requests |
+| Returns a random 5xx error | 10% of requests |
+| Drops the TCP connection | 2% of requests |
+| Sends malformed / partial JSON | 2% of requests |
+| Hangs the response (~30 s) | 3% of requests |
+
+Or enable with custom rates:
+
+```bash
+phantomback start --chaos --chaos-failure 0.2 --chaos-latency 300,2000
 ```
 
 ---
@@ -286,41 +324,54 @@ curl http://localhost:3777/api/users \
 
 ## Reality Mode — Chaos Engineering
 
-Test your frontend's resilience by simulating real-world production failures.
+PhantomBack's second core feature. Once your fake API works, flip Reality Mode on to test how your frontend *actually* handles broken backends.
 
-Enable in `phantom.config.js`:
+### Enable via CLI (quickest)
+
+```bash
+phantomback start --chaos                            # defaults
+phantomback start --chaos --chaos-failure 0.2        # 20% failure rate
+phantomback start --chaos --chaos-latency 500,3000   # 500–3000 ms jitter
+```
+
+### Enable via `phantom.config.js` (full control)
 
 ```js
 export default {
-  // ...
+  port: 3777,
+  resources: { /* your schema */ },
+
   chaos: {
     enabled: true,
-    latency:            { min: 200, max: 5000 }, // latency jitter range (ms)
-    failureRate:        0.1,                      // 10% random 5xx responses
-    errorCodes:         [500, 502, 503, 504],
-    connectionDropRate: 0.02,                     // 2% abrupt connection drops
-    corruptionRate:     0.02,                     // 2% malformed JSON
-    timeoutRate:        0.03,                     // 3% hanging responses
-    scenarios:          ['latency', 'failure', 'drop', 'corruption', 'timeout'],
+    latency:            { min: 200, max: 5000 }, // random delay range (ms)
+    failureRate:        0.1,                      // 10% → random 5xx response
+    errorCodes:         [500, 502, 503, 504],     // which 5xx codes to use
+    connectionDropRate: 0.02,                     // 2%  → TCP connection drop
+    corruptionRate:     0.02,                     // 2%  → malformed JSON body
+    timeoutRate:        0.03,                     // 3%  → response hangs ~30 s
+    scenarios: ['latency', 'failure', 'drop', 'corruption', 'timeout'],
   },
 };
 ```
 
-Or enable instantly from the CLI:
+### Chaos Scenarios
 
-```bash
-phantomback start --chaos                           # enable with defaults
-phantomback start --chaos --chaos-failure 0.2      # 20% failure rate
-phantomback start --chaos --chaos-latency 500,3000 # 500–3000 ms jitter
-```
+| Scenario | Config Key | Rate | What your frontend sees |
+|---|---|---|---|
+| `latency` | `latency` | ~30% | Slow response — spinner never ends |
+| `failure` | `failureRate` | 10% | Random 500 / 502 / 503 / 504 |
+| `drop` | `connectionDropRate` | 2% | Network error — socket closed mid-flight |
+| `corruption` | `corruptionRate` | 2% | `SyntaxError` — invalid JSON received |
+| `timeout` | `timeoutRate` | 3% | Request hangs — no response for ~30 s |
 
-| Scenario | Config Key | Description |
-|---|---|---|
-| `latency` | `latency` | Injects random delay on ~30% of requests |
-| `failure` | `failureRate` | Returns a random 5xx error |
-| `drop` | `connectionDropRate` | Abruptly closes the TCP connection |
-| `corruption` | `corruptionRate` | Sends malformed / partial JSON |
-| `timeout` | `timeoutRate` | Hangs the response for ~30 seconds |
+### What to test with Reality Mode
+
+- Loading states and spinners under slow networks
+- Retry logic and exponential backoff
+- Error boundaries and fallback UI
+- Toast / notification error handling
+- Request timeout cancellation (`AbortController`)
+- Partial data rendering on corrupt responses
 
 > **Full guide →** [phantombackxdocs.vercel.app/docs/reality-mode](https://phantombackxdocs.vercel.app/docs/reality-mode)
 
@@ -453,6 +504,7 @@ MIT © [Madhav Chaturvedi](https://github.com/madhavxchaturvedi)
 [npm](https://www.npmjs.com/package/phantomback) ·
 [GitHub](https://github.com/madhavxchaturvedi/npm-phantomback) ·
 [CLI Reference](https://phantombackxdocs.vercel.app/docs/cli) ·
+[Reality Mode](https://phantombackxdocs.vercel.app/docs/reality-mode) ·
 [Playground](https://phantombackxdocs.vercel.app/docs/playground)
 
 Made with ❤️ by [Madhav Chaturvedi](https://madhavxchaturvedi.vercel.app) · [LinkedIn](https://www.linkedin.com/in/madhavxchaturvedi/) · [Instagram](https://www.instagram.com/madhavxchaturvedi)
