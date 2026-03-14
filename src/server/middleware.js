@@ -1,6 +1,15 @@
 import cors from 'cors';
 import express from 'express';
+import chalk from 'chalk';
 import { logger } from '../utils/logger.js';
+
+const METHOD_BADGE = {
+  GET:    chalk.bgHex('#052e16').hex('#4ade80').bold,
+  POST:   chalk.bgHex('#172554').hex('#60a5fa').bold,
+  PUT:    chalk.bgHex('#422006').hex('#fbbf24').bold,
+  PATCH:  chalk.bgHex('#2d1b69').hex('#f472b6').bold,
+  DELETE: chalk.bgHex('#450a0a').hex('#f87171').bold,
+};
 
 /**
  * Create and configure the Express server with standard middleware
@@ -21,9 +30,10 @@ export function createExpressApp(config) {
     }),
   );
 
-  // Request logger
+  // Request logger — compact per-request log
   app.use((req, _res, next) => {
-    logger.route(req.method, req.originalUrl);
+    const badge = (METHOD_BADGE[req.method] || chalk.bgGray.white.bold)(` ${req.method.padEnd(6)}`);
+    process.stdout.write(`  ${badge}  ${chalk.dim(req.originalUrl)}\n`);
     next();
   });
 

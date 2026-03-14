@@ -91,8 +91,7 @@ export default {
 `;
 
   writeFileSync(configPath, template, 'utf-8');
-  logger.success(`Created ${configPath}`);
-  logger.info('Edit the file to define your resources, then run: phantomback start');
+  logger.initSuccess('phantom.config.js');
 }
 
 /**
@@ -108,7 +107,7 @@ export async function startCommand(options) {
   let config;
 
   if (options.zero) {
-    logger.info('Zero-config mode: generating demo backend...');
+    logger.info('Zero-config mode — spinning up demo backend...');
     config = await parseConfig({
       port: options.port || 3777,
       prefix: options.prefix || '/api',
@@ -151,20 +150,18 @@ export async function startCommand(options) {
 
   // Check if using defaults (no config found and no resources)
   if (Object.keys(config.resources).length === 0) {
-    logger.warn('No config found and no resources defined. Using zero-config defaults.');
+    logger.warn('No config found — using zero-config defaults.');
     config.resources = DEFAULT_RESOURCES;
   }
 
-  logger.table(config.resources);
-
   const { stop } = await createServer(config);
-
-  logger.server(config.port);
 
   // Graceful shutdown
   const shutdown = async () => {
-    logger.info('Shutting down...');
+    console.log('');
+    logger.warn('Shutting down...');
     await stop();
+    console.log('');
     process.exit(0);
   };
 

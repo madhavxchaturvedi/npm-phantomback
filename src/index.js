@@ -39,11 +39,8 @@ export async function createPhantom(userConfig = {}) {
   }
 
   logger.banner();
-  logger.table(config.resources);
 
   const instance = await createServer(config);
-
-  logger.server(config.port);
 
   return instance;
 }

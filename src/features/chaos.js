@@ -456,13 +456,5 @@ export function createChaosRoutes(app, engine, config) {
     });
   });
 
-  // Log registered chaos routes
-  logger.chaos('Control endpoints registered:');
-  logger.route('GET', `${prefix}/_chaos`);
-  logger.route('POST', `${prefix}/_chaos/enable`);
-  logger.route('POST', `${prefix}/_chaos/disable`);
-  logger.route('POST', `${prefix}/_chaos/pause`);
-  logger.route('POST', `${prefix}/_chaos/resume`);
-  logger.route('POST', `${prefix}/_chaos/configure`);
-  logger.route('POST', `${prefix}/_chaos/reset`);
+  // Log registered chaos routes — silenced, shown in table summary
 }

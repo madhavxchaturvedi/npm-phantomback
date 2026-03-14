@@ -8,7 +8,6 @@ import { delayMiddleware } from '../features/delay.js';
 import { validationMiddleware } from '../schema/validator.js';
 import { detectRelations, getChildren } from '../data/relations.js';
 import { asyncHandler, sendResponse, sendError } from '../utils/helpers.js';
-import { logger } from '../utils/logger.js';
 
 /**
  * Generate REST CRUD routes for all resources
@@ -235,16 +234,10 @@ export function createRouter(config, store) {
         }),
       );
 
-      logger.route('GET', nestedPath);
+      // nested route registered silently
     }
 
-    // Log registered routes
-    logger.route('GET', basePath);
-    logger.route('GET', `${basePath}/:id`);
-    logger.route('POST', basePath);
-    logger.route('PUT', `${basePath}/:id`);
-    logger.route('PATCH', `${basePath}/:id`);
-    logger.route('DELETE', `${basePath}/:id`);
+    // routes registered silently — summary shown in logger.table()
   }
 
   return router;
