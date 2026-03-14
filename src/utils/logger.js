@@ -120,7 +120,7 @@ export const logger = {
       [GHOST_LINES[0](), c.violetB('PhantomBack')],
       [GHOST_LINES[1](), c.dim('Instant Fake Backend')],
       [GHOST_LINES[2](), c.dim('Reality Mode · Chaos Engineering')],
-      [GHOST_LINES[3](), c.dim('v2.0.3')],
+      [GHOST_LINES[3](), c.dim('v2.0.4')],
       [GHOST_LINES[4](), ''],
       [GHOST_LINES[5](), ''],
     ];

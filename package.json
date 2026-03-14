@@ -1,6 +1,6 @@
 {
   "name": "phantomback",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Two tools, one package. Fake Backend: drop in your API schema → instant stateful REST server with realistic data, JWT auth, pagination, filtering & sorting. Reality Mode: flip one flag → random failures, latency spikes, connection drops & corrupted responses to harden your frontend.",
   "type": "module",
   "main": "./src/index.js",
